@@ -1,0 +1,54 @@
+# 1️⃣ Iniciar o Zookeeper
+docker run -d --name kafka --link zookeeper:zookeeper -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 -e KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 wurstmeister/kafka
+
+# 2️⃣ Iniciar o Kafka
+docker exec -it kafka kafka-topics.sh --create --topic transacoes --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+# 3️⃣ Verificar se Kafka e Zookeeper estão rodando
+docker ps
+
+# 4️⃣ Criar o tópico 'transacoes'
+docker exec -it kafka kafka-topics.sh --create --topic transacoes --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+# 5️⃣ Criar o tópico 'fraudes'
+docker exec -it kafka kafka-topics.sh --create --topic fraudes --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+# 6️⃣ Listar os tópicos criados
+docker exec -it kafka kafka-topics.sh --list --bootstrap-server localhost:9092
+
+# 7️⃣ Enviar mensagens manualmente para 'transacoes'
+docker exec -it kafka kafka-console-producer.sh --broker-list localhost:9092 --topic transacoes
+
+# 8️⃣ Consumir mensagens do tópico 'transacoes'
+docker exec -it kafka kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic transacoes --from-beginning
+
+# 9️⃣ Consumir mensagens do tópico 'fraudes'
+docker exec -it kafka kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic fraudes --from-beginning
+
+# 🔟 Reiniciar Kafka e Zookeeper
+docker restart zookeeper kafka
+
+# 🔄 Parar Kafka e Zookeeper
+docker stop zookeeper kafka
+"""
+
+# Criando um arquivo com as querys SQL para MySQL
+-- Criar banco de dados
+CREATE DATABASE fraude_detector;
+
+-- Usar banco de dados
+USE fraude_detector;
+
+-- Criar tabela para armazenar fraudes
+CREATE TABLE fraudes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    transaction_id INT NOT NULL,
+    value FLOAT NOT NULL,
+    country VARCHAR(50) NOT NULL,
+    fraude VARCHAR(50) NOT NULL,
+    timestamp DATETIME NOT NULL
+);
+
+-- Consultar todas as fraudes detectadas
+SELECT * FROM fraudes;
