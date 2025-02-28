@@ -33,7 +33,8 @@ fraude-detect/
 ├── fraud_detector.py       # Módulo que implementa as regras de detecção de fraude
 ├── database.py             # Módulo para persistência de fraudes no MySQL
 ├── settings.py             # Configurações do Kafka e do banco de dados
-└── gen_transaction.py      # Gerador de transações (dados simulados)
+├── gen_transaction.py      # Gerador de transações (dados simulados)
+└── docs/                   # Diretório com imagens do ReadMe e rascunho de comandos e querys
 ```
 
 ## Configuração do Ambiente
@@ -43,10 +44,10 @@ fraude-detect/
 #### Configuração
 ```sh
 # 1️⃣ Iniciar o Zookeeper
-docker run -d --name kafka --link zookeeper:zookeeper -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 -e KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 wurstmeister/kafka
+docker run -d --name zookeeper -p 2181:2181 wurstmeister/zookeeper
 
 # 2️⃣ Iniciar o Kafka
-docker exec -it kafka kafka-topics.sh --create --topic transacoes --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+docker run -d --name kafka --link zookeeper:zookeeper -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 -e KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 wurstmeister/kafka
 
 # 3️⃣ Criar o tópico 'transacoes'
 docker exec -it kafka kafka-topics.sh --create --topic transacoes --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
@@ -126,6 +127,28 @@ SELECT * FROM fraudes;
      ```sql
      SELECT * FROM fraudes;
      ```
+
+## Resultado
+
+- ### **consumer.py**
+
+![img_5.png](docs/images/img_5.png)
+
+- ### **producer.py**
+
+![img_4.png](docs/images/img_4.png)
+
+- ### **Console Transações**
+
+![img_2.png](docs/images/img_2.png)
+
+- ### **Console Fraudes**
+
+![img_3.png](docs/images/img_3.png)
+
+- ### **TABELA MySQL - Fraudes**
+
+![img.png](docs/images/img.png)
 
 ## Considerações Finais
 

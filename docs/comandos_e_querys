@@ -1,7 +1,9 @@
 # 1️⃣ Iniciar o Zookeeper
-docker run -d --name kafka --link zookeeper:zookeeper -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 -e KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 wurstmeister/kafka
+docker run -d --name zookeeper -p 2181:2181 wurstmeister/zookeeper
 
 # 2️⃣ Iniciar o Kafka
+docker run -d --name kafka --link zookeeper:zookeeper -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 -e KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 wurstmeister/kafka
+
 docker exec -it kafka kafka-topics.sh --create --topic transacoes --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 
 # 3️⃣ Verificar se Kafka e Zookeeper estão rodando
